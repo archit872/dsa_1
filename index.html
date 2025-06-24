@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Definitive Guide to DSA</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+
+    <!-- Google Fonts: Roboto for body, Material Icons for buttons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- KaTeX for LaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVZs3OFDheKApe+YOPibHHY+uKjTNsACFxLSgvxtAlGLIWJ0BsG" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzYCEHPNKAev8tduzZRglWVOvTHGOgnUE4f" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+
+    <!-- Prism.js for Code Highlighting (Tomorrow Night theme) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        /* --- Material Design Color Palette & Variables --- */
+        :root {
+            --background-dark: #121212;
+            --surface-dark: #212121;
+            --primary-text: #E0E0E0;
+            --secondary-text: #BDBDBD;
+            --divider-color: #424242;
+
+            /* Heading Colors */
+            --main-title-color: #FFFFFF;
+            --h1-color: #4DB6AC; /* Teal 300 */
+            --h2-color: #FFD54F; /* Amber 300 */
+            --h3-color: #64B5F6; /* Blue 300 */
+            --h4-color: #81C784; /* Green 300 */
+            --link-color: #64B5F6;
+
+            --font-family: 'Roboto', sans-serif;
+            --nav-width: 320px;
+            --transition-speed: 0.3s;
+        }
+
+        /* --- Base & Typography --- */
+        body {
+            background-color: var(--background-dark);
+            color: var(--primary-text);
+            font-family: var(--font-family);
+            margin: 0;
+            line-height: 1.7;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            color: var(--main-title-color);
+            font-weight: 700;
+            text-align: center;
+            margin-top: 1em;
+            margin-bottom: 1.5em;
+            line-height: 1.2;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 500;
+            margin-top: 2em;
+            margin-bottom: 1em;
+            line-height: 1.3;
+        }
+
+        h1 { font-size: 2.5rem; color: var(--h1-color); border-bottom: 2px solid var(--h1-color); padding-bottom: 0.3em;}
+        h2 { font-size: 2rem; color: var(--h2-color); }
+        h3 { font-size: 1.6rem; color: var(--h3-color); }
+        h4 { font-size: 1.3rem; color: var(--h4-color); }
+        p, li { font-size: 1.1rem; color: var(--primary-text); margin-bottom: 1.2em; }
+        ul, ol { padding-left: 25px; }
+        strong { font-weight: 700; color: var(--h2-color); }
+        a { color: var(--link-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* --- Navigation Panel --- */
+        .nav-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--nav-width);
+            background-color: var(--surface-dark);
+            border-right: 1px solid var(--divider-color);
+            transform: translateX(0);
+            transition: transform var(--transition-speed) ease-in-out;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-panel.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .nav-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--divider-color);
+        }
+
+        .nav-header h2 { margin: 0; font-size: 1.4rem; color: white; }
+
+        .nav-content { overflow-y: auto; flex-grow: 1; }
+        .nav-content ul { list-style: none; padding: 1rem 0; margin: 0; }
+        .nav-content ul li a {
+            display: block;
+            padding: 0.6rem 1.5rem;
+            color: var(--secondary-text);
+            font-size: 1rem;
+            transition: background-color 0.2s, color 0.2s;
+            border-left: 3px solid transparent;
+            line-height: 1.4;
+        }
+        .nav-content ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+            text-decoration: none;
+            border-left: 3px solid var(--h2-color);
+        }
+        .nav-content > ul > li > ul { padding-left: 1rem; }
+        .nav-content > ul > li > ul > li > a { font-size: 0.95rem; }
+        .nav-content > ul > li > ul > li > ul { padding-left: 1rem; }
+        .nav-content > ul > li > ul > li > ul > li a { font-size: 0.9rem; }
+
+
+        /* --- Collapse / Expand Buttons --- */
+        .nav-button {
+            background: none; border: none; color: var(--secondary-text);
+            cursor: pointer; padding: 0.5rem; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .nav-button:hover { background-color: rgba(255, 255, 255, 0.1); color: white; }
+        #expand-btn {
+            position: fixed; top: 1rem; left: 1rem; z-index: 1001;
+            background-color: var(--surface-dark);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); display: none;
+        }
+        .nav-panel.collapsed ~ #expand-btn { display: flex; }
+
+
+        /* --- Main Content Area --- */
+        .main-content {
+            padding: 2rem;
+            transition: margin-left var(--transition-speed) ease-in-out;
+            margin-left: var(--nav-width);
+        }
+        .nav-panel.collapsed ~ .main-content { margin-left: 0; }
+        .content-wrapper { max-width: 1000px; margin: 0 auto; }
+
+        /* --- Tables & Code Blocks --- */
+        .table-container, .code-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border: 1px solid var(--divider-color);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%; border-collapse: collapse;
+            background-color: var(--surface-dark);
+        }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--divider-color); }
+        th { background-color: rgba(255, 255, 255, 0.08); color: var(--h2-color); }
+        pre[class*="language-"] {
+            margin: 0; border-radius: 8px; padding: 1.5rem;
+            font-size: 1rem;
+        }
+
+        /* --- KaTeX Math Formatting --- */
+        .katex-display {
+            padding: 1rem; border: 1px dashed var(--divider-color);
+            border-radius: 8px; margin: 2rem 0; overflow-x: auto;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 1200px) {
+            :root { --nav-width: 280px; }
+            .main-title { font-size: 3rem; }
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.8rem; }
+            h3 { font-size: 1.5rem; }
+        }
+
+        @media (max-width: 768px) {
+            .main-content { margin-left: 0 !important; padding: 1.5rem 1rem; }
+            .main-title { font-size: 2.2rem; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.7rem; }
+            h3 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Collapsible Navigation Panel -->
+    <nav class="nav-panel" id="nav-panel">
+        <div class="nav-header">
+            <h2>Knowledge Base</h2>
+            <button class="nav-button" id="collapse-btn" aria-label="Collapse navigation">
+                <span class="material-icons">menu_open</span>
+            </button>
+        </div>
+        <div class="nav-content">
+            <ul>
+                <li><a href="#part1">Part I: Foundations</a>
+                    <ul>
+                        <li><a href="#sec1">Sec 1: Prerequisites</a></li>
+                        <li><a href="#sec2">Sec 2: Complexity Analysis</a></li>
+                        <li><a href="#sec3">Sec 3: Problem Solving</a></li>
+                    </ul>
+                </li>
+                <li><a href="#part2">Part II: Data Structures</a>
+                     <ul>
+                        <li><a href="#sec4">Sec 4: Linear Data Structures</a></li>
+                        <li><a href="#sec5">Sec 5: Non-Linear DS</a></li>
+                    </ul>
+                </li>
+                <li><a href="#part3">Part III: Algorithms</a>
+                     <ul>
+                        <li><a href="#sec6">Sec 6: Searching & Sorting</a></li>
+                        <li><a href="#sec7">Sec 7: Core Paradigms</a></li>
+                        <li><a href="#sec8">Sec 8: Dynamic Programming</a></li>
+                    </ul>
+                </li>
+                <li><a href="#part4">Part IV: Advanced Topics</a>
+                     <ul>
+                        <li><a href="#sec9">Sec 9: Advanced Graph Algos</a></li>
+                        <li><a href="#sec10">Sec 10: Problem-Solving Patterns</a></li>
+                    </ul>
+                </li>
+                <li><a href="#part5">Part V: C++ Toolkit</a>
+                     <ul>
+                        <li><a href="#sec12">Sec 12: CP Optimizations</a></li>
+                        <li><a href="#sec13">Sec 13: Advanced Libraries</a></li>
+                    </ul>
+                </li>
+                 <li><a href="#part6">Part VI: Practice</a>
+                     <ul>
+                        <li><a href="#sec14">Sec 14: Learning Roadmap</a></li>
+                        <li><a href="#sec15">Sec 15: Problem Repository</a>
+                             <ul>
+                                <li><a href="#sec15-1">15.1 Arrays & Hashing</a></li>
+                                <li><a href="#sec15-2">15.2 Two Pointers</a></li>
+                                <li><a href="#sec15-3">15.3 Sliding Window</a></li>
+                                <li><a href="#sec15-4">15.4 Stack</a></li>
+                                <li><a href="#sec15-5">15.5 Binary Search</a></li>
+                                <li><a href="#sec15-6">15.6 Linked List</a></li>
+                                <li><a href="#sec15-7">15.7 Trees</a></li>
+                                <li><a href="#sec15-8">15.8 Tries</a></li>
+                                <li><a href="#sec15-9">15.9 Heaps / PQs</a></li>
+                                <li><a href="#sec15-10">15.10 Backtracking</a></li>
+                                <li><a href="#sec15-11">15.11 Graphs</a></li>
+                                <li><a href="#sec15-12">15.12 Dynamic Programming</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#conclusion">Conclusion</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Floating Expand Button -->
+    <button class="nav-button" id="expand-btn" aria-label="Expand navigation">
+        <span class="material-icons">menu</span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            
+            <div class="main-title">The Definitive Guide to Data Structures and Algorithms</div>
+
+            <!-- PART 1: FOUNDATIONS -->
+            <h1 id="part1">Part I: The Foundations of Algorithmic Thinking</h1>
+            <p>Before delving into specific data structures or complex algorithms, a solid foundation in algorithmic thinking is paramount. This initial part establishes the conceptual and practical groundwork, focusing not just on what to learn, but on how to think like a proficient problem-solver. It covers the strategic selection of a programming language, the mastery of fundamental analytical techniques, and the adoption of a systematic approach to deconstructing and solving problems.</p>
+            
+            <h2 id="sec1">Section 1: Mastering the Prerequisites: Language and Environment</h2>
+            <p>The journey into Data Structures and Algorithms (DSA) begins with two foundational pillars: choosing a suitable programming language and mastering its core constructs. This initial phase is not merely a preliminary step but a strategic decision that shapes the entire learning trajectory.</p>
+
+            <h3 id="sec1-1">1.1 Choosing Your Weapon: The Programming Language Decision</h3>
+            <p>The selection of a programming language for learning and practicing DSA is a critical first step. While DSA concepts are language-agnostic, the choice of language influences the ease of learning, execution performance, and the specific libraries and tools one must master. The most prominent languages in this domain are Python, C++, and Java, each presenting a distinct set of trade-offs.</p>
+            <p>The decision represents a strategic balance between ease of learning, execution speed, and industry relevance. A beginner might choose Python to focus on algorithmic logic without the cognitive overhead of manual memory management. This choice prioritizes a gentle learning curve but may sacrifice raw performance in time-critical scenarios. Conversely, a competitive programmer, for whom every millisecond counts, will almost certainly choose C++ for its unparalleled execution speed and the powerful Standard Template Library (STL). An aspiring software engineer targeting large enterprise companies might opt for Java, valuing its robust, mature ecosystem and its prevalence in corporate environments. This choice is the first strategic fork in the road, with significant downstream implications.</p>
+            <ul>
+                <li><strong>Python:</strong> Widely recommended for beginners, Python's clean, high-level syntax allows learners to concentrate on the logic of the algorithms rather than the intricacies of the language. Its extensive standard library, particularly the <code>collections</code> module, provides powerful, ready-to-use implementations of common data structures, facilitating rapid prototyping and problem-solving.</li>
+                <li><strong>C++:</strong> The language of choice for competitive programming and performance-critical applications. C++ offers low-level memory management capabilities, which can provide a deeper understanding of how data structures operate under the hood. Its Standard Template Library (STL) is a comprehensive toolkit of optimized containers and algorithms, essential for high-performance coding.</li>
+                <li><strong>Java:</strong> A robust, object-oriented language that is a mainstay in enterprise-level software development. Its strong typing and rich Collections Framework (JCF) make it an excellent choice for building large, maintainable systems. Learning DSA with Java is highly relevant for technical interviews at many large corporations.</li>
+            </ul>
+            
+            <h3 id="sec1-2">1.2 Foundational Constructs</h3>
+            <p>Regardless of the language chosen, a deep fluency in its fundamental building blocks is non-negotiable. Before tackling DSA, one must achieve mastery over core programming constructs. These include:</p>
+             <ul>
+                <li><strong>Variables and Data Types:</strong> Understanding how the language stores and handles different kinds of data, such as numbers, characters, and strings.</li>
+                <li><strong>Control Structures:</strong> Proficiency in using loops (<code>for</code>, <code>while</code>) and conditional logic (<code>if/else</code>) to control the flow of program execution.</li>
+                <li><strong>Functions and Methods:</strong> The ability to break down complex problems into smaller, reusable, and modular pieces of code.</li>
+                <li><strong>Object-Oriented Programming (OOP):</strong> Several learning guides emphasize the utility of OOP concepts like classes, objects, inheritance, and polymorphism.</li>
+            </ul>
+            <p>The principles of OOP are not merely an adjacent skill but serve as the natural architectural paradigm for implementing data structures. A data structure, by its very nature, bundles data with the operations that can be performed upon it. This is precisely the definition of a class in OOP. For example, a <code>Node</code> in a linked list is an object that encapsulates data (a value) and behavior (a pointer to the next node). A <code>LinkedList</code> class then encapsulates the <code>head</code> pointer and the methods that operate on the list, such as <code>add()</code> and <code>remove()</code>. Therefore, understanding OOP provides the essential blueprint for building clean, modular, and reusable implementations of every subsequent data structure.</p>
+            
+            <h2 id="sec2">Section 2: Algorithmic Complexity Analysis</h2>
+            <p>After establishing a foundation in a programming language, the next critical step is to learn the language of algorithmic efficiency: complexity analysis. This discipline provides a formal framework for measuring and comparing the performance of algorithms, independent of hardware, programming language, or compiler optimizations.</p>
+            
+            <h3 id="sec2-1">2.1 The Why: Measuring Efficiency</h3>
+            <p>The primary goal of complexity analysis is to understand how an algorithm's resource requirements—specifically, its execution time (time complexity) and memory footprint (space complexity)—scale as the size of the input grows. This analysis is not concerned with the exact runtime in seconds, which can vary wildly depending on the machine, but rather with the <em>rate of growth</em> of the runtime.</p>
+            <p>This abstract measurement, most commonly expressed using Big O notation, serves as a universal and language-agnostic metric. It allows developers to engage in meaningful discussions about the trade-offs between different solutions. For instance, an algorithm with a time complexity of `$O(n \log n)$` is fundamentally more efficient for large inputs than one with a complexity of `$O(n^2)$`, regardless of the specific implementation details. In the context of technical interviews and professional software engineering, complexity analysis is the primary tool used to differentiate a merely functional solution from a truly efficient and scalable one.</p>
+            
+            <h3 id="sec2-2">2.2 The How: Asymptotic Notations (Big O, Omega, Theta)</h3>
+            <p>Asymptotic notations are the mathematical tools used to describe the limiting behavior of a function when the argument tends towards a particular value or infinity. In DSA, they describe the complexity of an algorithm as the input size `$n$` becomes large. The three most important notations are Big O, Big Omega, and Big Theta.</p>
+            <ul>
+                <li><strong>Big O Notation ($O$):</strong> Describes the <strong>upper bound</strong> of an algorithm's complexity, representing the <strong>worst-case scenario</strong>. It provides a guarantee that the algorithm's performance will not exceed this limit.
+                    <ul><li><strong>Formal Definition</strong>: A function `$f(n)$` is `$O(g(n))$` if there exist positive constants `$c$` and `$n_0$` such that `$0 \le f(n) \le c \cdot g(n)$` for all `$n \ge n_0$`.</li></ul>
+                </li>
+                <li><strong>Big Omega Notation ($\Omega$):</strong> Describes the <strong>lower bound</strong> of an algorithm's complexity, representing the <strong>best-case scenario</strong>. It guarantees that the algorithm's performance will be at least this good.
+                     <ul><li><strong>Formal Definition</strong>: A function `$f(n)$` is `$\Omega(g(n))$` if there exist positive constants `$c$` and `$n_0$` such that `$0 \le c \cdot g(n) \le f(n)$` for all `$n \ge n_0$`.</li></ul>
+                </li>
+                <li><strong>Big Theta Notation ($\Theta$):</strong> Describes a <strong>tight bound</strong> on an algorithm's complexity, representing the <strong>average-case</strong> or typical scenario. A function is `$\Theta(g(n))$` if it is both `$O(g(n))$` and `$\Omega(g(n))$`.
+                     <ul><li><strong>Formal Definition</strong>: A function `$f(n)$` is `$\Theta(g(n))$` if there exist positive constants `$c_1$`, `$c_2$`, and `$n_0$` such that `$0 \le c_1 \cdot g(n) \le f(n) \le c_2 \cdot g(n)$` for all `$n \ge n_0$`.</li></ul>
+                </li>
+            </ul>
+            <p>While all three notations are academically important, in the world of practical software engineering and technical interviews, <strong>Big O notation is paramount</strong>. Engineers design systems for reliability and predictability. A service provider must guarantee performance even under peak load—the worst-case scenario—not just on an average day. For example, the Quicksort algorithm has an average-case complexity of `$\Theta(n \log n)$` but a worst-case complexity of `$O(n^2)$`. A responsible engineer must be aware of and design for that worst-case possibility. Therefore, while this guide will cover all three notations, it will emphasize Big O as the industry standard for discussing complexity because it provides a performance guarantee.</p>
+
+            <h3 id="sec2-3">2.3 Analyzing Recursive Algorithms: Recursion Tree and Master Theorem</h3>
+            <p>Analyzing the complexity of iterative algorithms (those using loops) is often straightforward. However, recursive algorithms require specialized techniques. The two primary methods for this analysis are the Recursion Tree Method and the Master Theorem.</p>
+
+            <h4>2.3.1 The Recursion Tree Method</h4>
+            <p>The recursion tree method is a visual technique used to understand and analyze the complexity of a recursive algorithm. It works by diagramming the tree of recursive calls and the amount of work done at each level of the tree. The total complexity is then found by summing the work done across all levels. This method is particularly valuable for building intuition about how a recurrence relation unfolds.</p>
+            <p><strong>Steps for using the Recursion Tree Method:</strong></p>
+            <ol>
+                <li><strong>Draw the Tree:</strong> Start with the initial call at the root. Draw the recursive calls as children of the current node. Continue expanding the tree until the base cases are reached at the leaves.</li>
+                <li><strong>Calculate Work per Level:</strong> For each level of the tree, calculate the total amount of work done. This is typically the number of nodes at that level multiplied by the work done per node.</li>
+                <li><strong>Sum the Work:</strong> Sum the work done across all levels to get the total time complexity of the algorithm. This often involves summing a geometric or arithmetic series.</li>
+            </ol>
+            <p>For example, consider the recurrence for Merge Sort: `$T(n) = 2T(n/2) + cn$`.</p>
+            <ul>
+                <li>The root of the tree does `$cn$` work.</li>
+                <li>The next level has 2 nodes, each doing `$c(n/2)$` work, for a total of `$2 \cdot c(n/2) = cn$`.</li>
+                <li>Each subsequent level also sums to `$cn$` work.</li>
+                <li>The tree has a height of `$\log_2 n$`.</li>
+                <li>The total work is the sum of work at each level: `$cn \times \log n$`, giving a complexity of `$O(n \log n)$`.</li>
+            </ul>
+            <p>This method provides a powerful visual and conceptual model, but it can be cumbersome and is not a formal proof. Its primary strength is in building the foundational understanding required for more formal methods.</p>
+            
+            <h4>2.3.2 The Master Theorem</h4>
+            <p>The Master Theorem provides a "cookbook" method for solving a specific class of recurrence relations that frequently appear in the analysis of divide-and-conquer algorithms. It applies to recurrences of the form:</p>
+            $$T(n) = aT(n/b) + f(n)$$
+            <p>where `$a \ge 1$`, `$b > 1$`, and `$f(n)$` is an asymptotically positive function representing the cost of the work done outside the recursive calls (the "divide" and "combine" steps).</p>
+            <p>The theorem is a direct formalization of the patterns observed in recursion trees. It compares the rate of growth of the work done at the root (`$f(n)$`) with the rate of growth of the number of leaves in the recursion tree, which is given by `$n^{\log_b a}$`.</p>
+            <p><strong>The Three Cases of the Master Theorem:</strong></p>
+            <ol>
+                <li><strong>Case 1: Leaf-Dominated</strong><br>If `$f(n) = O(n^{\log_b a - \epsilon})$` for some constant `$\epsilon > 0$`, then `$T(n) = \Theta(n^{\log_b a})$`.<br>This means the work done at the leaves of the recursion tree polynomially dominates the work done at the root. The overall cost is dominated by the cost at the leaves.</li>
+                <li><strong>Case 2: Balanced Work</strong><br>If `$f(n) = \Theta(n^{\log_b a})$`, then `$T(n) = \Theta(n^{\log_b a} \log n)$`.<br>This means the work done is distributed evenly across all levels of the tree. The total cost is the work per level multiplied by the number of levels (`$\log n$`).</li>
+                <li><strong>Case 3: Root-Dominated</strong><br>If `$f(n) = \Omega(n^{\log_b a + \epsilon})$` for some constant `$\epsilon > 0$`, and if `$a \cdot f(n/b) \le c \cdot f(n)$` for some constant `$c < 1$` and all sufficiently large `$n$` (the "regularity condition"), then `$T(n) = \Theta(f(n))$`.<br>This means the work done at the root polynomially dominates the work done at the leaves. The overall cost is dominated by the work at the root.</li>
+            </ol>
+            <p><strong>Solved Examples:</strong></p>
+            <ul>
+                <li><strong>Merge Sort:</strong> `$T(n) = 2T(n/2) + \Theta(n)$`. Here `$a=2, b=2$`, so `$n^{\log_b a} = n^{\log_2 2} = n^1$`. Since `$f(n) = \Theta(n^1)$`, this falls into <strong>Case 2</strong>. Thus, `$T(n) = \Theta(n \log n)$`.</li>
+                <li><strong>Binary Search:</strong> `$T(n) = T(n/2) + \Theta(1)$`. Here `$a=1, b=2$`, so `$n^{\log_b a} = n^{\log_2 1} = n^0 = 1$`. Since `$f(n) = \Theta(1)$`, this also falls into <strong>Case 2</strong> (with `$k=0$` in the extended version). Thus, `$T(n) = \Theta(\log n)$`.</li>
+                <li><strong>Example Recurrence:</strong> `$T(n) = 3T(n/2) + n^2$`. Here `$a=3, b=2$`, so `$n^{\log_b a} = n^{\log_2 3} \approx n^{1.58}$`. Since `$f(n) = n^2 = \Omega(n^{1.58 + \epsilon})$`, this falls into <strong>Case 3</strong>. Thus, `$T(n) = \Theta(n^2)$`.</li>
+            </ul>
+            <p>The Master Theorem is a powerful shortcut, but it has limitations. It does not apply if `$f(n)$` is not a polynomial, if `$a$` is not a constant, or if the subproblems are not of equal size. In such cases, one must revert to other methods like the recursion tree or substitution method.</p>
+
+            <h2 id="sec3">Section 3: A Systematic Approach to Problem Solving</h2>
+            <p>Beyond theoretical knowledge, effective problem-solving in DSA requires a disciplined and repeatable methodology. A novice programmer might see a problem and immediately start coding, often leading to confusion, bugs, and an inefficient solution. In contrast, an expert employs a structured, multi-step process that deconstructs the problem, explores potential solutions, and validates the final implementation. Adopting this workflow is not just a technique for solving individual problems; it is a framework for deliberate practice that builds true problem-solving acumen.</p>
+            <p>The following systematic approach is synthesized from numerous expert guides and roadmaps:</p>
+            <ol>
+                <li><strong>Analyze and Understand the Problem:</strong> The first and most critical step is to deeply understand the problem statement. This involves more than a cursory reading.
+                    <ul>
+                        <li><strong>Clarify Requirements:</strong> What is the exact goal? What should the output be?</li>
+                        <li><strong>Identify Inputs and Constraints:</strong> What is the format of the input data (e.g., array of integers, string)? What are the constraints on its size (e.g., `$N \le 10^5$`)? Constraints are crucial as they hint at the required time complexity. An `$O(n^2)$` solution will time out if `$N$` is `$10^5$`, but might be acceptable if `$N$` is `$1000$`.</li>
+                        <li><strong>Look for Keywords:</strong> Identify critical keywords that suggest a particular approach or data structure. For example, "sorted" might suggest Binary Search or the Two Pointers pattern; "in-place" limits space complexity to `$O(1)$`; "shortest path" points to graph algorithms.</li>
+                    </ul>
+                </li>
+                <li><strong>Formulate Concrete Examples:</strong> Before writing any code, manually work through at least three to four examples. This solidifies understanding and helps uncover edge cases.
+                    <ul>
+                        <li><strong>Simple Case:</strong> A straightforward example that tests the core logic.</li>
+                        <li><strong>Edge Cases:</strong> What happens with empty input (``), a single element (``), or an input with all identical elements (``)?.</li>
+                        <li><strong>Complex Case:</strong> A more involved example that tests all aspects of the problem.</li>
+                    </ul>
+                    This step ensures that the developed solution is robust and handles all possible scenarios.
+                </li>
+                <li><strong>Develop a Brute-Force Solution:</strong> Start by outlining a simple, correct solution, even if it is computationally inefficient. For example, for a problem asking to find a pair of numbers that sum to a target, the brute-force approach is to check every possible pair with nested loops (`$O(n^2)$`). This step serves two purposes: it confirms a complete understanding of the problem's logic and provides a baseline against which to optimize.</li>
+                <li><strong>Optimize and Identify Patterns:</strong> With a working brute-force solution in mind, the next step is to optimize. Analyze the brute-force approach for bottlenecks and repeated work. This is where pattern recognition becomes key.
+                    <ul>
+                        <li>Ask questions like: "Am I re-computing the same value multiple times?" (Hint for Dynamic Programming). "Can I use the sorted nature of the input to my advantage?" (Hint for Binary Search or Two Pointers).</li>
+                        <li>Attempt to map the problem to known techniques and patterns, such as the Two-Pointer or Sliding Window approaches.</li>
+                    </ul>
+                </li>
+                <li><strong>Write Pseudocode:</strong> Before translating the optimized logic into a specific programming language, write it out in pseudocode—a human-readable, high-level description of the algorithm's steps. This helps organize thoughts and structure the code cleanly, separating the logic from the syntax.</li>
+                <li><strong>Implement and Test:</strong> Translate the pseudocode into actual code in the chosen programming language. Once implemented, rigorously test the solution against the concrete examples formulated in Step 2. This validation step is crucial for catching bugs and confirming the correctness of the implementation.</li>
+            </ol>
+            <p>By consistently applying this structured process, a learner moves from simply memorizing solutions to developing a robust, analytical framework for tackling any unseen problem.</p>
+            
+            <!-- PART 2: DATA STRUCTURES -->
+            <h1 id="part2">Part II: A Comprehensive Guide to Data Structures</h1>
+            <p>Data structures are the fundamental building blocks of computer science, providing the means to organize, store, and manage data efficiently for specific operations. This part serves as an encyclopedic reference for the most critical data structures, detailing their underlying principles, common operations, performance characteristics, and typical use cases. The structures are broadly categorized into linear and non-linear types.</p>
+
+            <h2 id="sec4">Section 4: Linear Data Structures</h2>
+            <p>Linear data structures arrange elements in a sequential order. Each element is connected to its previous and next element, forming a linear chain. This category includes some of the most foundational structures in programming.</p>
+            
+            <h3 id="sec4-1">4.1 Arrays and Dynamic Arrays</h3>
+            <p>An array is a collection of items of the same data type stored in <strong>contiguous memory locations</strong>. This contiguous storage is the source of an array's primary advantage: the ability to access any element in constant time, or `$O(1)$`, given its index.</p>
+            <ul>
+                <li><strong>Core Operations:</strong>
+                    <ul>
+                        <li><strong>Access:</strong> Retrieving the element at a given index. Time complexity: `$O(1)$`.</li>
+                        <li><strong>Search:</strong> Finding an element in the array. Time complexity: `$O(n)$` for an unsorted array (Linear Search) and `$O(\log n)$` for a sorted array (Binary Search).</li>
+                        <li><strong>Insertion/Deletion:</strong> Adding or removing an element. In a static array, this requires shifting subsequent elements, resulting in an `$O(n)$` time complexity in the worst case (e.g., inserting at the beginning).</li>
+                    </ul>
+                </li>
+                <li><strong>Fixed vs. Dynamic Arrays:</strong>
+                    <ul>
+                        <li><strong>Fixed-size arrays</strong> have their size determined at compile time. This can lead to wasted memory if underutilized or errors if more space is needed.</li>
+                        <li><strong>Dynamic arrays</strong> (such as C++ <code>std::vector</code>, Java <code>ArrayList</code>, or Python <code>list</code>) automatically resize themselves when they run out of space. While this provides flexibility, it comes with a hidden performance consideration.</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>The resizing process of a dynamic array provides a classic example of <strong>amortized analysis</strong>. When a dynamic array becomes full and a new element is added, the library must allocate a new, larger block of memory (typically 1.5x or 2x the original size) and copy all existing elements from the old array to the new one. This single <code>append</code> operation is expensive, taking `$O(n)$` time. However, this cost is "amortized" or spread out over the many preceding `$O(1)$` append operations. When averaged over a large number of insertions, the cost per operation is effectively constant. Understanding this concept is crucial for advanced performance analysis and explains why `append` operations are generally considered `$O(1)$` on average.</p>
+            <p>A curated list of classic array problems can be found in resources like LeetCode and GeeksforGeeks, ranging from easy tasks like "Two Sum" to hard challenges like "Trapping Rain Water".</p>
+
+            <h3 id="sec4-2">4.2 Strings</h3>
+            <p>A string is a sequence of characters, typically implemented as an <strong>immutable array of characters</strong>. Its immutability means that once a string is created, it cannot be changed; operations that appear to modify a string actually create a new one.</p>
+            <p>While seemingly simple, string-based problems serve as a gateway to some of the most sophisticated algorithms in DSA. The learning journey with strings often follows a clear progression in difficulty:</p>
+            <ol>
+                <li><strong>Basic Manipulation:</strong> Problems like reversing a string, checking for palindromes, or checking for anagrams test fundamental loop and array/pointer skills.</li>
+                <li><strong>Substring/Subsequence Problems:</strong> Challenges like finding the "Longest Palindromic Substring" or "Longest Common Subsequence" often introduce dynamic programming patterns.</li>
+                <li><strong>Advanced Pattern Searching:</strong> This category includes a family of highly optimized algorithms designed to find a pattern string within a larger text string. Mastering these is a hallmark of an advanced programmer. Key algorithms include:
+                    <ul>
+                        <li><strong>Rabin-Karp Algorithm:</strong> Uses hashing (specifically, rolling hash) to efficiently compare substrings.</li>
+                        <li><strong>Knuth-Morris-Pratt (KMP) Algorithm:</strong> Uses a precomputed "longest proper prefix which is also suffix" (LPS) array to avoid redundant comparisons after a mismatch.</li>
+                        <li><strong>Z-Algorithm:</strong> A linear time pattern searching algorithm that constructs a Z-array to find all occurrences of a pattern.</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 id="sec4-3">4.3 Linked Lists (Singly, Doubly, Circular)</h3>
+            <p>A linked list is a linear data structure composed of a sequence of <strong>nodes</strong>, where each node contains data and one or more pointers to other nodes. Unlike arrays, nodes in a linked list are not stored in contiguous memory locations, which gives them their primary advantage: highly efficient insertion and deletion operations, especially at the beginning of the list.</p>
+            <p>The power of a linked list lies entirely in the manipulation of its pointers. The time complexity of any operation is determined by how many pointers must be read and reassigned.</p>
+            <ul>
+                <li><strong>Insertion at the head:</strong> Requires only updating the <code>head</code> pointer and the new node's <code>next</code> pointer. This is an `$O(1)$` operation.</li>
+                <li><strong>Accessing the k-th element:</strong> Requires traversing `$k$` nodes from the head. This is an `$O(k)$` operation.</li>
+            </ul>
+            <p>There are three main types of linked lists:</p>
+            <ol>
+                <li><strong>Singly Linked List:</strong> Each node has one pointer, pointing to the next node in the sequence. Traversal is unidirectional.</li>
+                <li><strong>Doubly Linked List:</strong> Each node has two pointers: one to the next node and one to the previous node. This allows for efficient bidirectional traversal. With a tail pointer, insertion/deletion at the end also becomes `$O(1)$`.</li>
+                <li><strong>Circular Linked List:</strong> The <code>next</code> pointer of the last node points back to the first node, forming a loop. This is useful for applications that require continuous cycling, like round-robin schedulers.</li>
+            </ol>
+            <p>Core operations for linked lists include insertion, deletion, traversal, and searching, each with specific implementations for the beginning, end, and middle of the list.</p>
+
+            <h3 id="sec4-4">4.4 Stacks and Queues</h3>
+            <p>Stacks and Queues are abstract data types (ADTs) defined by the rules governing how elements are added and removed, rather than by a specific underlying implementation.</p>
+            <ul>
+                <li><strong>Stack (LIFO):</strong> A stack operates on the <strong>Last-In, First-Out (LIFO)</strong> principle. The last element added is the first one to be removed. This is analogous to a stack of plates.
+                    <ul>
+                        <li><strong>Core Operations:</strong> <code>push</code> (add to top), <code>pop</code> (remove from top), <code>peek</code> (view top element).</li>
+                        <li><strong>Use Cases:</strong> Function call stack management, undo/redo functionality, parsing expressions (e.g., checking for balanced parentheses), and as a key component in algorithms like Depth-First Search (DFS).</li>
+                    </ul>
+                </li>
+                <li><strong>Queue (FIFO):</strong> A queue operates on the <strong>First-In, First-Out (FIFO)</strong> principle. The first element added is the first one to be removed, like a checkout line at a store.
+                    <ul>
+                        <li><strong>Core Operations:</strong> <code>enqueue</code> (add to rear), <code>dequeue</code> (remove from front), <code>peek</code> (view front element).</li>
+                        <li><strong>Use Cases:</strong> Managing tasks in order (e.g., print queues), scheduling systems, and as the core data structure for Breadth-First Search (BFS).</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>The choice of the concrete data structure used to implement a stack or queue has significant performance implications. For example, implementing a queue with a standard Python <code>list</code> is a common pitfall for beginners. While <code>list.append()</code> (enqueue) is an efficient amortized `$O(1)$` operation, <code>list.pop(0)</code> (dequeue) is an inefficient `$O(n)$` operation because all remaining elements must be shifted one position to the left. The correct, high-performance implementation in Python uses <code>collections.deque</code>, for which both <code>append()</code> and <code>popleft()</code> are `$O(1)$` operations. A similar consideration exists in other languages, making the distinction between the abstract concept and its concrete implementation vital.</p>
+            
+            <h2 id="sec5">Section 5: Non-Linear Data Structures</h2>
+            <p>Non-linear data structures organize elements hierarchically or in a network, where an element can be connected to multiple other elements. This allows for the representation of more complex relationships than linear structures.</p>
+
+            <h3 id="sec5-1">5.1 Hash Tables (Hash Maps, Hash Sets)</h3>
+            <p>A <strong>hash table</strong> is a data structure that implements an associative array, mapping keys to values for highly efficient lookups. It achieves an average time complexity of <strong>`$O(1)$`</strong> for insertion, deletion, and search operations. This remarkable performance is achieved by using a <strong>hash function</strong> to compute an index, or "hash code," from a key, which determines where the corresponding value should be stored in an underlying array.</p>
+            <ul>
+                <li><strong>Key Components:</strong>
+                    <ul>
+                        <li><strong>Hash Function:</strong> A function that maps a key to an integer index in the array. A good hash function distributes keys uniformly across the array to minimize collisions.</li>
+                        <li><strong>Collision Resolution:</strong> Since different keys can produce the same hash code (a "collision"), a strategy is needed to handle this. The most common method is <strong>separate chaining</strong>, where each array index points to a linked list of key-value pairs that have hashed to that index.</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>While hash tables offer unparalleled average-case speed, their performance is entirely dependent on the quality of the hash function. A poorly designed hash function that causes many collisions can degrade the performance of all operations to `$O(n)$` in the worst case, as the algorithm would have to traverse a long linked list.</p>
+            <p>This vulnerability is particularly relevant in adversarial environments like competitive programming. The default hash functions in some standard libraries (like older versions of C++ <code>unordered_map</code>) can be predictable. An adversary could craft specific inputs that all hash to the same bucket, causing a "hash-hacking" denial-of-service attack and leading to a "Time Limit Exceeded" (TLE) verdict. The defense against this is to use a more robust custom hash function, often one that incorporates a random seed to make its behavior unpredictable across different runs. This advanced consideration highlights the importance of understanding not just how hash tables work, but also their potential failure modes.</p>
+
+            <h3 id="sec5-2">5.2 Trees (Binary, BST, AVL, Red-Black)</h3>
+            <p>A <strong>tree</strong> is a non-linear, hierarchical data structure consisting of nodes connected by edges. Each node can have multiple children, but there is only one unique path from the root node to any other node.</p>
+            <ul>
+                <li><strong>Binary Tree:</strong> A tree in which each node has at most two children, referred to as the left child and the right child.</li>
+                <li><strong>Binary Search Tree (BST):</strong> A special type of binary tree that maintains a specific ordering property: for any given node, all values in its left subtree are less than the node's value, and all values in its right subtree are greater than the node's value (`left < root < right`). This property allows for efficient searching, insertion, and deletion in `$O(\log n)$` average time.</li>
+                <li><strong>Tree Traversals:</strong> There are four fundamental ways to visit all nodes in a tree:
+                    <ul>
+                        <li><strong>In-order Traversal:</strong> Left -> Root -> Right (yields sorted elements in a BST).</li>
+                        <li><strong>Pre-order Traversal:</strong> Root -> Left -> Right.</li>
+                        <li><strong>Post-order Traversal:</strong> Left -> Right -> Root.</li>
+                        <li><strong>Level-order Traversal (BFS):</strong> Visits nodes level by level, from top to bottom.</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>The `$O(\log n)$` performance promise of a BST is entirely contingent on the tree remaining <strong>balanced</strong>. If elements are inserted in a sorted or nearly-sorted order (e.g., 1, 2, 3, 4, 5), a naive BST will degenerate into a long chain—effectively a linked list. In this worst-case scenario, the height of the tree becomes `$n$` instead of `$\log n$`, and the performance of operations degrades to `$O(n)$`.</p>
+            <p>This failure mode necessitates the use of <strong>self-balancing binary search trees</strong>, such as <strong>AVL Trees</strong> and <strong>Red-Black Trees</strong>. These structures automatically perform re-balancing operations (called "rotations") after insertions and deletions to ensure the tree's height remains logarithmic with respect to the number of nodes, thus guaranteeing `$O(\log n)$` worst-case performance for all major operations. While implementing these from scratch is rarely required in interviews, understanding <em>why</em> they are needed and the performance guarantee they provide is essential.</p>
+
+            <h3 id="sec5-3">5.3 Heaps and Priority Queues</h3>
+            <p>A <strong>heap</strong> is a specialized tree-based data structure that satisfies the <strong>heap property</strong>. It is typically implemented as a complete binary tree.</p>
+            <ul>
+                <li><strong>Min-Heap:</strong> The value of each parent node is less than or equal to the values of its children. The root node holds the minimum element in the collection.</li>
+                <li><strong>Max-Heap:</strong> The value of each parent node is greater than or equal to the values of its children. The root node holds the maximum element.</li>
+            </ul>
+            <p>This structure allows for `$O(1)$` time complexity to access the minimum (or maximum) element and `$O(\log n)$` time for insertion and deletion of the min/max element.</p>
+            <p>A <strong>Priority Queue</strong> is an abstract data type that operates like a regular queue but assigns a priority to each element. Elements with higher priority are served before elements with lower priority. The heap is the most common and efficient underlying implementation for a priority queue.</p>
+            <p>Learners often confuse heaps and BSTs. The key distinction lies in their purpose and the level of ordering they maintain. A BST maintains <strong>total order</strong>, enabling efficient searching for any element and sorted traversal. A heap only maintains a <strong>partial order</strong>; its sole purpose is to provide fast access to the single most extreme element (min or max). It cannot efficiently search for an arbitrary element or produce a fully sorted list without being dismantled. This distinction is critical for selecting the right tool for the job: if you need to process tasks by priority, use a priority queue (heap); if you need to maintain a sorted collection for arbitrary lookups, use a BST or a sorted set.</p>
+            
+            <h3 id="sec5-4">5.4 Graphs</h3>
+            <p>A <strong>graph</strong> is a non-linear data structure consisting of a set of <strong>vertices</strong> (or nodes) and a set of <strong>edges</strong> that connect pairs of vertices. Graphs are used to model networks and relationships between entities, such as social networks, road maps, and computer networks.</p>
+             <ul>
+                <li><strong>Graph Representations:</strong> The choice of how to represent a graph in memory is a critical design decision with significant performance trade-offs.
+                    <ul>
+                        <li><strong>Adjacency Matrix:</strong> A `$V \times V$` grid (where `$V$` is the number of vertices) where `matrix[i][j] = 1` if an edge exists between vertex `$i$` and vertex `$j$`, and 0 otherwise. It offers `$O(1)$` edge lookup but requires `$O(V^2)$` space, which is inefficient for sparse graphs (graphs with few edges).</li>
+                        <li><strong>Adjacency List:</strong> An array of lists, where `adj[i]` contains a list of all vertices adjacent to vertex `$i$`. It requires `$O(V + E)$` space (where `$E$` is the number of edges), making it far more space-efficient for sparse graphs. However, checking for an edge between two vertices takes `$O(\text{degree}(V))$` time. For most competitive programming problems, where graphs are often sparse, the adjacency list is the preferred representation.</li>
+                    </ul>
+                </li>
+                <li><strong>Graph Traversal Algorithms:</strong>
+                    <ul>
+                        <li><strong>Breadth-First Search (BFS):</strong> Explores the graph level by level, starting from a source vertex. It uses a queue to manage the nodes to visit and is ideal for finding the shortest path in an unweighted graph.</li>
+                        <li><strong>Depth-First Search (DFS):</strong> Explores the graph by going as deep as possible along each branch before backtracking. It uses a stack (often the implicit function call stack via recursion) and is used for tasks like cycle detection, finding connected components, and topological sorting.</li>
+                    </ul>
+                </li>
+            </ul>
+            
+            <h3 id="sec5-5">5.5 Tries (Prefix Trees)</h3>
+            <p>A <strong>Trie</strong>, also known as a prefix tree, is a specialized tree-like data structure used for efficient retrieval of keys in a dataset of strings. In a trie, nodes do not store keys themselves; instead, their position in the tree defines the key they are associated with. All descendants of a node share a common prefix of the string associated with that node, while the root is associated with the empty string.</p>
+            <ul>
+                <li><strong>Structure:</strong> Each node represents a character. A path from the root to a specific node represents a prefix. A special marker (e.g., a boolean flag) on a node indicates the end of a complete word.</li>
+                <li><strong>Operations and Complexity:</strong>
+                    <ul>
+                        <li><strong>Insertion and Search:</strong> The time complexity for inserting or searching for a string of length `$L$` is `$O(L)$`. This is independent of the number of words (`$N$`) in the trie, making it faster than a BST of strings, which would be `$O(L \cdot \log N)$`.</li>
+                        <li><strong>Space Complexity:</strong> The space complexity depends on the number of nodes, which is proportional to the sum of the lengths of all words. The number of children per node depends on the alphabet size (`$A$`).</li>
+                    </ul>
+                </li>
+                <li><strong>Use Cases:</strong> Tries are exceptionally well-suited for problems involving prefixes, such as implementing autocomplete systems or finding all words with a common prefix.</li>
+            </ul>
+            <p>The primary trade-off with tries is their space consumption. While time-efficient, they can be memory-intensive if the alphabet size is large and the strings do not share many common prefixes.</p>
+
+            <!-- PART 3: ALGORITHMS -->
+            <h1 id="part3">Part III: Essential Algorithms and Paradigms</h1>
+            <p>This part transitions from the organization of data to its active processing. It covers the foundational algorithms for searching and sorting, which are prerequisites for many advanced topics, and then explores the major algorithmic paradigms—the high-level strategies or "blueprints" for designing solutions to a wide range of problems.</p>
+
+            <h2 id="sec6">Section 6: Fundamental Searching and Sorting Algorithms</h2>
+            <p>Searching and sorting are among the most fundamental operations in computer science. A solid understanding of these algorithms is essential, as they are frequently used as subroutines in more complex problems.</p>
+            <h3 id="sec6-1">6.1 Searching Algorithms</h3>
+            <p>Searching algorithms are used to find a specific element (the "key") within a collection of data.</p>
+            <ul>
+                <li><strong>Linear Search:</strong> This is the most basic search algorithm. It sequentially checks each element of a list until a match is found or the whole list has been searched. It can be used on any list, sorted or unsorted.
+                    <ul><li><strong>Time Complexity:</strong> `$O(n)$` in the worst and average case.</li></ul>
+                </li>
+                <li><strong>Binary Search:</strong> A highly efficient search algorithm that works only on <strong>sorted</strong> collections. It follows a divide-and-conquer approach: it compares the target value with the middle element of the collection. If they are not equal, the half in which the target cannot lie is eliminated, and the search continues on the remaining half, again taking the middle element to compare with the target value, and repeating this until the target value is found.
+                    <ul><li><strong>Time Complexity:</strong> `$O(\log n)$`.</li></ul>
+                </li>
+            </ul>
+
+            <h3 id="sec6-2">6.2 Sorting Algorithms</h3>
+            <p>Sorting algorithms arrange the elements of a collection in a specific order (e.g., numerical or lexicographical). The choice of sorting algorithm depends on factors like the size of the data, whether the data is nearly sorted, memory constraints, and the need for stability.</p>
+            <p>A crucial distinction exists between <strong>comparison-based</strong> and <strong>non-comparison-based</strong> sorts. Comparison-based sorts (like Merge Sort, Quick Sort, Heap Sort) rely on comparing elements to determine their relative order. It has been mathematically proven that any comparison-based sorting algorithm has a lower bound of `$\Omega(n \log n)$` for its average and worst-case time complexity. To achieve better performance (i.e., linear time), an algorithm must leverage additional information about the nature of the input data, which is the principle behind non-comparison sorts.</p>
+            <ul>
+                <li><strong>Non-Comparison Sorts:</strong>
+                    <ul>
+                        <li><strong>Counting Sort:</strong> This algorithm works by counting the number of occurrences of each distinct element in the input array. It is only suitable when the input consists of integers within a known, relatively small range (`$k$`). Its time complexity is `$O(n + k)$`.</li>
+                        <li><strong>Radix Sort:</strong> This algorithm sorts integers by processing individual digits. It groups keys by the individual digits which share the same significant position and value. It can achieve linear time complexity under the assumption that the number of digits in the numbers is constant.</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>The following table provides a comparative analysis of the most common sorting algorithms, serving as a quick reference for selecting the appropriate algorithm based on specific problem constraints.</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>Algorithm</th><th>Time Complexity (Best)</th><th>Time Complexity (Average)</th><th>Time Complexity (Worst)</th><th>Space Complexity (Worst)</th><th>Stable</th><th>In-Place</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Bubble Sort</strong></td><td>`$O(n)$`</td><td>`$O(n^2)$`</td><td>`$O(n^2)$`</td><td>`$O(1)$`</td><td>Yes</td><td>Yes</td></tr>
+                        <tr><td><strong>Selection Sort</strong></td><td>`$O(n^2)$`</td><td>`$O(n^2)$`</td><td>`$O(n^2)$`</td><td>`$O(1)$`</td><td>No</td><td>Yes</td></tr>
+                        <tr><td><strong>Insertion Sort</strong></td><td>`$O(n)$`</td><td>`$O(n^2)$`</td><td>`$O(n^2)$`</td><td>`$O(1)$`</td><td>Yes</td><td>Yes</td></tr>
+                        <tr><td><strong>Merge Sort</strong></td><td>`$O(n \log n)$`</td><td>`$O(n \log n)$`</td><td>`$O(n \log n)$`</td><td>`$O(n)$`</td><td>Yes</td><td>No</td></tr>
+                        <tr><td><strong>Quick Sort</strong></td><td>`$O(n \log n)$`</td><td>`$O(n \log n)$`</td><td>`$O(n^2)$`</td><td>`$O(\log n)`</td><td>No</td><td>Yes</td></tr>
+                        <tr><td><strong>Heap Sort</strong></td><td>`$O(n \log n)$`</td><td>`$O(n \log n)$`</td><td>`$O(n \log n)$`</td><td>`$O(1)$`</td><td>No</td><td>Yes</td></tr>
+                        <tr><td><strong>Counting Sort</strong></td><td>`$O(n+k)$`</td><td>`$O(n+k)$`</td><td>`$O(n+k)$`</td><td>`$O(k)$`</td><td>Yes</td><td>No</td></tr>
+                        <tr><td><strong>Radix Sort</strong></td><td>`$O(d(n+k))$`</td><td>`$O(d(n+k))$`</td><td>`$O(d(n+k))$`</td><td>`$O(n+k)$`</td><td>Yes</td><td>No</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><em>(Note: For Counting Sort, `$k$` is the range of the input values. For Radix Sort, `$d$` is the number of digits in the largest number, and `$k$` is the base of the number system.)</em></p>
+            
+            <h2 id="sec7">Section 7: Core Algorithmic Paradigms</h2>
+            <p>Algorithmic paradigms are general, high-level strategies for designing algorithms to solve a wide variety of problems. Mastering these paradigms allows a problem-solver to recognize the underlying structure of a new problem and apply a proven template to solve it.</p>
+            <h3 id="sec7-1">7.1 Divide and Conquer</h3>
+            <p>The <strong>Divide and Conquer</strong> paradigm involves solving a problem by following three steps:</p>
+            <ol>
+                <li><strong>Divide:</strong> Break the given problem into several smaller, non-overlapping subproblems that are smaller instances of the same problem.</li>
+                <li><strong>Conquer:</strong> Solve the subproblems recursively. If the subproblem sizes are small enough (the base case), solve them directly.</li>
+                <li><strong>Combine:</strong> Combine the solutions of the subproblems to create a solution to the original problem.</li>
+            </ol>
+            <p>Classic examples of this paradigm include Merge Sort, Quick Sort, and Binary Search. For instance, in Merge Sort, an array is divided into two halves (Divide), each half is sorted recursively (Conquer), and the two sorted halves are merged back together (Combine).</p>
+            
+            <h3 id="sec7-2">7.2 Greedy Algorithms</h3>
+            <p>A <strong>Greedy Algorithm</strong> builds up a solution piece by piece, always choosing the option that offers the most obvious and immediate benefit at the current step. This approach makes a locally optimal choice with the hope that this series of local optima will lead to a globally optimal solution.</p>
+            <p>The main challenge with greedy algorithms is not in formulating the strategy, but in <em>proving its correctness</em>. It is easy to devise a greedy approach, but it often fails to produce the global optimum. For example, in the classic <strong>Coin Change</strong> problem, a greedy strategy of always taking the largest possible coin denomination works for standard US currency but fails for a system with coins `{1, 3, 4}` when trying to make change for 6. The greedy approach yields `4+1+1` (3 coins), while the optimal solution is `3+3` (2 coins). In contrast, for the <strong>Activity Selection Problem</strong>, a greedy strategy of always choosing the activity that finishes earliest does yield the global optimum. Therefore, when approaching a problem with a greedy mindset, it is crucial to rigorously question the approach: "Can I construct a counterexample where making the locally best choice prevents me from achieving the globally best solution?"</p>
+            
+            <h3 id="sec7-3">7.3 Backtracking</h3>
+            <p><strong>Backtracking</strong> is a general algorithmic technique for finding all (or some) solutions to computational problems, notably constraint satisfaction problems. It incrementally builds candidates for the solutions and abandons a candidate ("backtracks") as soon as it determines that the candidate cannot possibly be completed to a valid solution.</p>
+            <p>It can be thought of as a refined brute-force search that prunes the search space. The process is often visualized as a traversal of a state-space tree. The algorithm explores a path, and if it hits a dead end or violates a constraint, it backtracks to the previous decision point and explores a different path. This "choose, explore, unchoose" pattern is fundamental to the paradigm. Classic problems solved with backtracking include the N-Queens problem and Sudoku solvers.</p>
+            
+            <h2 id="sec8">Section 8: Dynamic Programming (DP)</h2>
+            <p>Dynamic Programming is one of the most powerful and often most intimidating algorithmic paradigms. It is an optimization technique used for problems that can be broken down into <strong>overlapping subproblems</strong> and possess <strong>optimal substructure</strong>.</p>
+            <ul>
+                <li><strong>Optimal Substructure:</strong> An optimal solution to the problem can be constructed from the optimal solutions of its subproblems.</li>
+                <li><strong>Overlapping Subproblems:</strong> A recursive solution to the problem involves solving the same subproblems multiple times.</li>
+            </ul>
+            <p>The core idea of DP is to solve each subproblem only once and store its result in a cache (an array or hash map). When the same subproblem is encountered again, the result is simply retrieved from the cache instead of being re-computed, leading to significant performance improvements, typically reducing exponential time complexities to polynomial time.</p>
+            
+            <h3 id="sec8-1">8.1 Core Concepts: Memoization and Tabulation</h3>
+            <p>The most effective way to understand and master DP is to view it as "intelligent recursion." The process of developing a DP solution can be broken down into a clear, repeatable sequence:</p>
+            <ol>
+                <li><strong>Brute-Force Recursion:</strong> First, formulate a simple, brute-force recursive solution to the problem. For example, a naive recursive solution for the Fibonacci sequence is <code>fib(n) = fib(n-1) + fib(n-2)</code>.</li>
+                <li><strong>Identify Overlapping Subproblems:</strong> Draw the recursion tree for the brute-force solution. Observe that the same subproblems (e.g., <code>fib(2)</code>) are being computed over and over again. This is the hallmark of a problem suitable for DP.</li>
+                <li><strong>Memoization (Top-Down DP):</strong> Optimize the recursive solution by adding a cache (e.g., a <code>dp</code> array or a hash map) to store the results of subproblems. Before computing a subproblem, check if its result is already in the cache. If it is, return the cached value. Otherwise, compute the result, store it in the cache, and then return it. This approach maintains the original top-down recursive structure but eliminates redundant work.</li>
+                <li><strong>Tabulation (Bottom-Up DP):</strong> Convert the memoized recursive solution into an iterative one. This involves creating a DP table (usually an array or a matrix) and filling it iteratively, starting from the base cases and building up to the final solution. For Fibonacci, this would mean creating an array <code>dp</code> and filling it with <code>dp[i] = dp[i-1] + dp[i-2]</code> in a loop from 2 to <code>n</code>. This approach avoids recursion overhead and is often more space-efficient.</li>
+            </ol>
+            <p>By following this "Recurse -> Memoize -> Tabulate" sequence, any DP problem can be approached systematically.</p>
+
+            <h3 id="sec8-2">8.2 Common DP Patterns and Problems</h3>
+            <p>DP problems often fall into recognizable patterns based on the structure of their state representation. Recognizing these patterns is key to solving them efficiently.</p>
+            <ul>
+                <li><strong>1D DP:</strong> Problems where the state can be represented by a single variable, <code>dp[i]</code>, typically meaning "the best solution for the problem up to index <code>i</code>".
+                    <ul><li><strong>Examples:</strong> Fibonacci Numbers, Climbing Stairs, House Robber.</li></ul>
+                </li>
+                <li><strong>2D DP / Grid Problems:</strong> Problems where the state is represented by two variables, <code>dp[i][j]</code>, often on a grid or involving two sequences. <code>dp[i][j]</code> could mean the solution for the grid ending at cell <code>(i, j)</code> or for prefixes of two strings of length <code>i</code> and <code>j</code>.
+                    <ul><li><strong>Examples:</strong> Unique Paths in a Grid, Minimum Path Sum, Longest Common Subsequence, Edit Distance.</li></ul>
+                </li>
+                <li><strong>Knapsack Problems:</strong> A classic DP pattern where the goal is to select items to maximize value given a weight constraint. The state is typically <code>dp[i][w]</code>, representing the maximum value achievable using a subset of the first <code>i</code> items with a total weight capacity of <code>w</code>.
+                    <ul><li><strong>Variations:</strong> 0/1 Knapsack (each item can be taken once or not at all), Unbounded Knapsack (items can be taken multiple times), Partition Equal Subset Sum.</li></ul>
+                </li>
+                <li><strong>Interval DP:</strong> Problems on linear sequences where the state <code>dp[i][j]</code> represents the solution for the subarray or substring from index <code>i</code> to <code>j</code>. The solution is built by combining solutions for smaller intervals within <code>[i, j]</code>.
+                    <ul><li><strong>Examples:</strong> Burst Balloons, Optimal Strategy for a Game (Coin Game).</li></ul>
+                </li>
+                <li><strong>Sequence DP (Longest Increasing Subsequence - LIS):</strong> A pattern where <code>dp[i]</code> represents the length of the longest increasing subsequence ending at index <code>i</code>. The transition involves checking all previous elements <code>j < i</code>.
+                    <ul><li><strong>Examples:</strong> Longest Increasing Subsequence and its many variations.</li></ul>
+                </li>
+                <li><strong>DP with Bitmasking:</strong> Used for problems involving subsets where the state needs to track which elements have been used. A bitmask (an integer) is used to represent the set of used elements, allowing for efficient state representation.
+                    <ul><li><strong>Examples:</strong> Traveling Salesperson Problem (TSP), Longest Path in a DAG.</li></ul>
+                </li>
+            </ul>
+            <p>Each of these patterns will be explored with detailed code examples following the systematic approach of recursion, memoization, and tabulation.</p>
+            
+            <!-- PART 4: ADVANCED TOPICS -->
+            <h1 id="part4">Part IV: Advanced Algorithms and Problem-Solving Patterns</h1>
+            <p>This part of the knowledge base is dedicated to algorithms and patterns that are essential for tackling medium-to-hard difficulty problems, frequently encountered in competitive programming and interviews at top-tier technology companies. It builds upon the foundational concepts of graphs and introduces powerful, reusable problem-solving templates.</p>
+
+            <h2 id="sec9">Section 9: Advanced Graph Algorithms</h2>
+            <p>Building on the basic graph representations (Adjacency Matrix/List) and traversal methods (BFS/DFS), this section explores algorithms designed to solve more complex problems on graphs. The choice of which algorithm to use is almost always dictated by the specific constraints of the problem, such as the presence of negative edge weights or the need to find paths versus spanning trees.</p>
+            <ul>
+                <li><strong>Topological Sort:</strong> This algorithm is used for Directed Acyclic Graphs (DAGs) to find a linear ordering of vertices such that for every directed edge from vertex <code>u</code> to vertex <code>v</code>, <code>u</code> comes before <code>v</code> in the ordering. It is essential for problems involving task scheduling or dependency resolution. A common implementation uses DFS and a stack.</li>
+                <li><strong>Shortest Path Algorithms:</strong> These algorithms find the path with the minimum total weight between vertices.
+                    <ul>
+                        <li><strong>Dijkstra's Algorithm:</strong> Finds the single-source shortest path from a starting node to all other nodes in a weighted graph. It is a greedy algorithm that works efficiently but has a critical limitation: it <strong>cannot be used on graphs with negative edge weights</strong>. Its time complexity is typically `$O(E \log V)$` using a priority queue.</li>
+                        <li><strong>Bellman-Ford Algorithm:</strong> Also finds the single-source shortest path but has the advantage of being able to <strong>handle graphs with negative edge weights</strong>. It can also detect negative weight cycles, which would cause Dijkstra's to fail. Its time complexity is higher, at `$O(V \cdot E)$`.</li>
+                        <li><strong>Floyd-Warshall Algorithm:</strong> An algorithm for finding the shortest paths between <strong>all pairs of vertices</strong> in a weighted graph. It uses dynamic programming and has a time complexity of `$O(V^3)$`. It is suitable for dense graphs where all-pairs shortest paths are required.</li>
+                    </ul>
+                </li>
+                <li><strong>Minimum Spanning Tree (MST) Algorithms:</strong> An MST is a subset of the edges of a connected, edge-weighted undirected graph that connects all the vertices together, without any cycles and with the minimum possible total edge weight.
+                    <ul>
+                        <li><strong>Prim's Algorithm:</strong> A greedy algorithm that grows the MST from a single starting vertex, at each step adding the cheapest possible connection from a vertex in the MST to a vertex outside the MST.</li>
+                        <li><strong>Kruskal's Algorithm:</strong> Another greedy algorithm that builds the MST by considering all edges in increasing order of weight and adding an edge if it does not form a cycle with the edges already added. It often uses a Disjoint Set Union (DSU) data structure to efficiently detect cycles.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2 id="sec10">Section 10: Common Problem-Solving Patterns</h2>
+            <p>Modern interview preparation and competitive programming have evolved to emphasize the recognition and application of reusable problem-solving patterns. These are not complete algorithms but rather powerful techniques or "mini-paradigms" that can be combined with data structures to create elegant and efficient solutions to a wide variety of problems.</p>
+            <ul>
+                <li><strong>Two Pointers:</strong> This pattern is typically used on sorted arrays or strings. It involves using two index pointers that move through the data structure to find a pair, triplet, or subarray that satisfies a certain condition. The pointers can move towards each other from opposite ends or in the same direction at different speeds.
+                    <ul><li><strong>Examples:</strong> 3Sum, Container With Most Water, Remove Duplicates from Sorted Array.</li></ul>
+                </li>
+                <li><strong>Sliding Window:</strong> This technique is used to find an optimal value (e.g., min/max sum, longest/shortest substring) over a contiguous subarray or substring of a fixed or variable size. A "window" of elements slides over the sequence, expanding from the right and contracting from the left, while maintaining the desired property.
+                    <ul><li><strong>Examples:</strong> Longest Substring Without Repeating Characters, Minimum Window Substring, Sliding Window Maximum.</li></ul>
+                </li>
+                <li><strong>Prefix Sums:</strong> This pattern involves pre-calculating the cumulative sum of an array's elements into a new "prefix sum" array. <code>prefix_sum[i]</code> stores the sum of all elements from index 0 to <code>i</code>. This allows for the calculation of the sum of any subarray <code>[i..j]</code> in `$O(1)$` time using the formula <code>prefix_sum[j] - prefix_sum[i-1]</code>.
+                    <ul><li><strong>Examples:</strong> Subarray Sum Equals K, Range Sum Query.</li></ul>
+                </li>
+                <li><strong>Bit Manipulation:</strong> This involves using bitwise operators (<code>&</code>, <code>|</code>, <code>^</code>, <code>~</code>, <code><<</code>, <code>>></code>) to solve problems efficiently. Bit manipulation can lead to solutions with very low constant factors and can be used to represent and manage subsets of elements.
+                    <ul><li><strong>Examples:</strong> Finding the single number that appears once in an array where all others appear twice (using XOR), counting the number of set bits in an integer, checking if a number is a power of two.</li></ul>
+                </li>
+            </ul>
+            <p>The power of these patterns is most evident when they are composed with data structures. For instance, the "Subarray Sum Equals K" problem can be solved in `$O(n^2)$` with a brute-force approach. However, by combining the <strong>Prefix Sum</strong> pattern with a <strong>Hash Map</strong> to store the frequencies of previously seen prefix sums, an `$O(n)$` solution can be achieved. For each prefix sum <code>current_sum</code>, one can check if <code>current_sum - K</code> exists in the hash map in `$O(1)$` time, immediately finding a valid subarray. This highlights how patterns serve as powerful building blocks for creating sophisticated and efficient algorithms.</p>
+            
+            <!-- PART 5: C++ TOOLKIT -->
+            <h1 id="part5">Part V: C++ Toolkit for High-Performance Coding</h1>
+            <p>While DSA concepts are universal, their practical implementation in a time-sensitive environment like a coding interview or a competitive programming contest relies heavily on the mastery of a language's standard library. This section covers C++-specific techniques and libraries that are crucial for high-performance coding.</p>
+            
+            <h2 id="sec12">Section 12: C++ Competitive Programming Optimizations</h2>
+            <p>In competitive programming, speed is paramount. This includes both the execution speed of the program and the speed at which a developer can write correct code. This section covers C++-specific techniques that are crucial for gaining a competitive edge.</p>
+            
+            <h3 id="sec12-1">12.1 Fast I/O</h3>
+            <p>Standard C++ input/output streams (<code>cin</code> and <code>cout</code>) can be surprisingly slow, often becoming a bottleneck in problems with large inputs. This is because, by default, they are synchronized with C's standard I/O streams (<code>stdio</code>). For competitive programming, this synchronization is unnecessary and can be disabled to significantly speed up I/O operations.</p>
+            <p>The following two lines, placed at the beginning of the <code>main</code> function, are standard practice in competitive programming to accelerate I/O:</p>
+            <div class="code-container"><pre><code class="language-cpp">
+std::ios_base::sync_with_stdio(false);
+std::cin.tie(NULL);
+            </code></pre></div>
+            <ul>
+                <li><code>ios_base::sync_with_stdio(false);</code> disables the synchronization between C++ and C standard streams, allowing `cin` and `cout` to use their own independent buffers.</li>
+                <li><code>cin.tie(NULL);</code> unties `cin` from `cout`. By default, before any input operation, `cout` is flushed. This is useful for interactive problems but creates unnecessary overhead in typical competitive problems.</li>
+            </ul>
+            <p>Additionally, using <code>'\n'</code> for newlines is faster than <code>std::endl</code>, because <code>endl</code> also forces a flush of the output buffer.</p>
+
+            <h3 id="sec12-2">12.2 Custom Comparators</h3>
+            <p>The STL algorithms and containers, such as <code>std::sort</code>, <code>std::set</code>, and <code>std::priority_queue</code>, rely on comparison operations. While default comparators (like <code>&lt;</code> or <code>&gt;</code>) work for basic types, you often need to define custom sorting logic for user-defined types (structs/classes) or for complex sorting criteria. A custom comparator is a binary function that returns <code>true</code> if the first argument should be ordered before the second.</p>
+            <p>There are several ways to implement custom comparators:</p>
+            <ul>
+                <li><strong>Function Pointer:</strong> A standalone boolean function that takes two arguments and implements the comparison logic.</li>
+                <li><strong>Lambda Expression:</strong> An inline, anonymous function that can be defined directly where the comparator is needed, such as in a call to <code>std::sort</code>.</li>
+                <li><strong>Functor (Function Object):</strong> A class or struct that overloads the <code>operator()</code>. This is a powerful method as functors can maintain state.</li>
+            </ul>
+            <p><strong>Example: Sorting a vector of structs using a lambda expression:</strong></p>
+            <div class="code-container"><pre><code class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+
+struct Edge {
+    int u, v, weight;
+};
+
+int main() {
+    std::vector&lt;Edge&gt; edges = {{1, 2, 10}, {0, 1, 5}, {2, 3, 2}};
+
+    // Sort edges by weight in ascending order
+    std::sort(edges.begin(), edges.end(),(const Edge& a, const Edge& b) {
+        return a.weight < b.weight;
+    });
+
+    for (const auto& edge : edges) {
+        std::cout << "{" << edge.u << ", " << edge.v << ", " << edge.weight << "}\\n";
+    }
+    return 0;
+}
+            </code></pre></div>
+            
+            <h3 id="sec12-3">12.3 Custom Hash Functions</h3>
+            <p>The <code>std::unordered_map</code> and <code>std::unordered_set</code> containers provide average `$O(1)$` performance for lookups, insertions, and deletions by using hash tables. While the STL provides hash functions for standard types like <code>int</code> and <code>std::string</code>, it does not for user-defined types, including <code>std::pair</code> or custom structs. To use these types as keys, you must supply a custom hash function.</p>
+            <p>Furthermore, the default hash function for integers in some compilers can be predictable. In competitive programming, this can be exploited by "anti-hash" test cases that cause a large number of collisions, degrading performance to `$O(n)$` and causing a "Time Limit Exceeded" error. A robust custom hash function can prevent this.</p>
+            <p>A custom hash function is typically implemented as a functor (a struct with an overloaded <code>operator()</code>).</p>
+            <p><strong>Example: Using a custom hash for `std::pair` in an `unordered_map`:</strong></p>
+            <div class="code-container"><pre><code class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;unordered_map&gt;
+#include &lt;chrono&gt;
+
+// Custom hash functor for pairs
+struct PairHasher {
+    std::size_t operator()(const std::pair&lt;int, int&gt;& p) const {
+        // A simple way to combine hashes
+        auto hash1 = std::hash&lt;int&gt;{}(p.first);
+        auto hash2 = std::hash&lt;int&gt;{}(p.second);
+        return hash1 ^ (hash2 &lt;&lt; 1); // Combine hashes
+    }
+};
+
+// Anti-hash-collision hash for integers
+struct RobustHasher {
+    static uint64_t splitmix64(uint64_t x) {
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = std::chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+
+int main() {
+    // Using the custom hash for pairs
+    std::unordered_map&lt;std::pair&lt;int, int&gt;, std::string, PairHasher&gt; pairMap;
+    pairMap[{1, 2}] = "Point A";
+
+    // Using the robust hash for integers to prevent collisions
+    std::unordered_map&lt;int, int, RobustHasher&gt; safeMap;
+    safeMap[10] = 100;
+    
+    std::cout << pairMap[{1, 2}] << std::endl;
+    return 0;
+}
+            </code></pre></div>
+            
+            <h2 id="sec13">Section 13: Advanced C++ Libraries and Features</h2>
+            <p>Beyond the standard STL containers, a C++ programmer aiming for the top tier of competitive programming should be familiar with more advanced, specialized tools. This includes extensions like Policy-Based Data Structures and modern language features that can simplify code and improve performance.</p>
+            
+            <h3 id="sec13-1">13.1 Policy-Based Data Structures (PBDS)</h3>
+            <p>The GNU C++ library provides an extension called Policy-Based Data Structures (PBDS), which offers high-performance containers not found in the standard library. These are particularly useful in competitive programming for solving complex problems elegantly.</p>
+            <p>To use them, you must include specific headers:</p>
+            <div class="code-container"><pre><code class="language-cpp">
+#include &lt;ext/pb_ds/assoc_container.hpp&gt;
+#include &lt;ext/pb_ds/tree_policy.hpp&gt;
+using namespace __gnu_pbds;
+            </code></pre></div>
+            <p>The most commonly used PBDS is the <code>tree</code>, which can be configured to act as an <strong>ordered set</strong>. An ordered set is a self-balancing binary search tree (specifically, a Red-Black Tree) that supports all the operations of a standard <code>std::set</code> (like insertion, deletion, and lookups in `$O(\log n)$` time) plus two powerful additional operations:</p>
+            <ol>
+                <li><code>find_by_order(k)</code>: Returns an iterator to the k-th smallest element (0-indexed). Time complexity: `$O(\log n)$`.</li>
+                <li><code>order_of_key(x)</code>: Returns the number of elements in the set that are strictly less than <code>x</code>. Time complexity: `$O(\log n)$`.</li>
+            </ol>
+            <p><strong>Example: Using an ordered set</strong></p>
+            <div class="code-container"><pre><code class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;ext/pb_ds/assoc_container.hpp&gt;
+#include &lt;ext/pb_ds/tree_policy.hpp&gt;
+
+using namespace __gnu_pbds;
+
+// Define the ordered_set
+typedef tree&lt;int, null_type, std::less&lt;int&gt;, rb_tree_tag, tree_order_statistics_node_update&gt; ordered_set;
+
+int main() {
+    ordered_set s;
+    s.insert(1);
+    s.insert(2);
+    s.insert(4);
+    s.insert(8);
+    s.insert(16);
+
+    // Find the 2nd smallest element (0-indexed)
+    std::cout << "2nd smallest element: " << *s.find_by_order(2) << std::endl; // Output: 4
+
+    // Find number of elements strictly less than 10
+    std::cout << "Elements < 10: " << s.order_of_key(10) << std::endl; // Output: 4
+
+    // Find number of elements strictly less than 1
+    std::cout << "Elements < 1: " << s.order_of_key(1) << std::endl; // Output: 0
+    
+    return 0;
+}
+            </code></pre></div>
+            <p>These operations are invaluable for problems involving dynamic order statistics, such as finding the median of a sliding window or counting inversions.</p>
+
+            <h3 id="sec13-2">13.2 Modern C++ Features (C++20)</h3>
+            <p>C++20 introduced several features that can make competitive programming code more concise, readable, and less error-prone.</p>
+            <h4>13.2.1 The Ranges Library</h4>
+            <p>The <code>&lt;ranges&gt;</code> library revolutionizes how algorithms are used by allowing them to operate directly on ranges (like a <code>std::vector</code>) instead of requiring pairs of iterators (<code>begin()</code> and <code>end()</code>). A key advantage is the ability to compose algorithms using the pipe (<code>|</code>) operator, creating powerful and readable data processing pipelines.</p>
+            <p><strong>Example: Filtering and transforming a vector</strong></p>
+             <div class="code-container"><pre><code class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;ranges&gt;
+
+int main() {
+    std::vector&lt;int&gt; nums = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    auto result_view = nums 
+| std::views::filter((int n){ return n % 2 == 0; }) 
+| std::views::transform((int n){ return n * n; });
+
+    for (int val : result_view) {
+        std::cout << val << " "; // Output: 4 16 36 64 100
+    }
+    std::cout << std::endl;
+    return 0;
+}
+            </code></pre></div>
+            <p>This code creates a "view" of the data without making any intermediate copies, which is highly efficient.</p>
+            
+            <h4>13.2.2 `std::span`</h4>
+            <p>Introduced in C++20, <code>std::span</code> provides a non-owning, bounds-safe view over a contiguous sequence of objects. It is a lightweight object, typically consisting of just a pointer and a size, that serves as a safer alternative to passing raw C-style arrays or pointer-size pairs to functions.</p>
+            <p><code>std::span</code> helps prevent common errors like buffer overflows by providing a unified interface for different contiguous containers like C-style arrays, <code>std::array</code>, and <code>std::vector</code>.</p>
+            <p><strong>Example: A function accepting `std::span`</strong></p>
+            <div class="code-container"><pre><code class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;span&gt;
+
+// This function can accept a C-style array, std::vector, std::array, etc.
+void print_sequence(std::span&lt;int&gt; data) {
+    for (int val : data) {
+        std::cout << val << " ";
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    int c_array[] = {1, 2, 3, 4, 5};
+    std::vector&lt;int&gt; vec = {6, 7, 8, 9, 10};
+
+    print_sequence(c_array); // Pass a C-style array
+    print_sequence(vec);     // Pass a std::vector
+
+    return 0;
+}
+            </code></pre></div>
+            <p>By using <code>std::span</code>, the <code>print_sequence</code> function becomes more generic and safer, as it no longer needs a separate size parameter and can work with any contiguous data source.</p>
+            
+            <!-- PART 6: PRACTICE -->
+            <h1 id="part6">Part VI: Curated Practice and Learning Roadmaps</h1>
+            <p>Theoretical knowledge of data structures and algorithms is necessary but not sufficient for mastery. Proficiency is forged through consistent, structured practice. This final part synthesizes the preceding information into an actionable learning plan and provides a comprehensive repository of curated problems to guide the learner from novice to expert.</p>
+
+            <h2 id="sec14">Section 14: The Synthesized Learning Roadmap</h2>
+            <p>The modern learner is faced with a paradox of choice, with numerous high-quality roadmaps available, each with a different emphasis—from the theoretical rigor of university courses to the pattern-based approach of NeetCode and the comprehensive problem-solving of Striver's A2Z Sheet. This knowledge base resolves this dilemma by presenting a single, unified "meta-roadmap" that integrates the best aspects of these proven guides.</p>
+            <p>This roadmap provides a step-by-step path through all major DSA topics, ensuring a logical and cumulative learning experience. The progression generally follows the structure of this document, from foundational concepts to advanced algorithms.</p>
+            <p><strong>The Unified DSA Learning Progression:</strong></p>
+            <ol>
+                <li><strong>Step 0: Foundations</strong>
+                    <ul>
+                        <li><strong>Topics:</strong> Language Proficiency (choose one of Python, C++, or Java), Algorithmic Complexity Analysis (Big O, Omega, Theta), and the Systematic Problem-Solving Approach.</li>
+                        <li><strong>Goal:</strong> Establish the non-negotiable prerequisites for tackling any DSA problem.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 1: Basic Data Structures & Algorithms</strong>
+                    <ul>
+                        <li><strong>Topics:</strong> Arrays, Strings, Basic Sorting (Bubble, Selection, Insertion), Hashing (Hash Maps & Sets), Linked Lists (Singly, Doubly).</li>
+                        <li><strong>Goal:</strong> Master the implementation and core operations of the most fundamental data structures.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 2: Core Data Structures & Intermediate Algorithms</strong>
+                    <ul>
+                        <li><strong>Topics:</strong> Stacks, Queues, Advanced Sorting (Merge Sort, Quick Sort), Binary Search, Recursion (basic patterns).</li>
+                        <li><strong>Goal:</strong> Understand abstract data types and begin applying recursive thinking and efficient divide-and-conquer algorithms.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 3: Non-Linear Data Structures</strong>
+                    <ul>
+                        <li><strong>Topics:</strong> Trees (Binary Trees, Binary Search Trees), Heaps (Priority Queues), Tries.</li>
+                        <li><strong>Goal:</strong> Develop proficiency with hierarchical data structures and their traversal and manipulation algorithms.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 4: Algorithmic Paradigms</strong>
+                    <ul>
+                        <li><strong>Topics:</strong> Greedy Algorithms, Backtracking.</li>
+                        <li><strong>Goal:</strong> Learn to recognize problems that fit these high-level strategic patterns and implement templated solutions.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 5: Advanced Topics & Patterns</strong>
+                    <ul>
+                        <li><strong>Topics:</strong> Graphs (BFS, DFS, Topological Sort, Dijkstra's, MST), Dynamic Programming (1D, 2D, Knapsack), Common Patterns (Two Pointers, Sliding Window, Prefix Sums).</li>
+                        <li><strong>Goal:</strong> Tackle the most challenging and frequently asked topics in technical interviews.</li>
+                    </ul>
+                </li>
+                <li><strong>Step 6: Advanced Data Structures & Algorithms</strong>
+                    <ul>
+                        <li><strong>Topics:</strong> Advanced Graph Algorithms (Bellman-Ford, Floyd-Warshall), Advanced DP (Interval, Bitmasking), Self-Balancing Trees (conceptual understanding of AVL/Red-Black), Advanced Data Structures (Tries, Segment Trees, Fenwick Trees).</li>
+                        <li><strong>Goal:</strong> Achieve a level of mastery sufficient for advanced competitive programming and complex real-world problem-solving.</li>
+                    </ul>
+                </li>
+            </ol>
+            <p>For each topic in this roadmap, the recommended learning process is to:</p>
+            <ul>
+                <li><strong>Learn the Theory:</strong> Understand the core concepts, operations, and complexity analysis as detailed in Parts I-IV of this guide.</li>
+                <li><strong>Master the Pattern:</strong> Identify the key problem-solving patterns associated with the topic (e.g., Two Pointers for sorted arrays).</li>
+                <li><strong>Solve the Core Problems:</strong> Work through a curated list of essential problems for that topic, provided in the next section, to build practical mastery.</li>
+            </ul>
+            
+            <h2 id="sec15">Section 15: Topic-Wise Problem Repository</h2>
+            <p>This section provides a comprehensive, curated repository of practice problems, organized according to the learning roadmap. The problems are hand-picked from essential lists like the <strong>Striver A2Z Sheet</strong>, <strong>NeetCode 150</strong>, and <strong>Blind 75</strong>, ensuring they are high-quality, relevant, and effective for building mastery. Each table provides the problem name, a link to its platform (primarily LeetCode), its difficulty, the key pattern it exemplifies, and common company tags where available.</p>
+
+            <h3 id="sec15-1">15.1 Arrays and Hashing</h3>
+            <div class="table-container">
+                <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Two Sum</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/two-sum/" target="_blank">Link</a></td><td>Easy</td><td>Hash Map</td><td>Google, Amazon, Facebook</td></tr>
+                        <tr><td>Valid Anagram</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/valid-anagram/" target="_blank">Link</a></td><td>Easy</td><td>Hash Map / Sorting</td><td>Facebook, Google</td></tr>
+                        <tr><td>Contains Duplicate</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank">Link</a></td><td>Easy</td><td>Hash Set</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Group Anagrams</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/group-anagrams/" target="_blank">Link</a></td><td>Medium</td><td>Hash Map, Sorting</td><td>Amazon, Google</td></tr>
+                        <tr><td>Top K Frequent Elements</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank">Link</a></td><td>Medium</td><td>Hash Map, Heap</td><td>Facebook, Microsoft</td></tr>
+                        <tr><td>Product of Array Except Self</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/product-of-array-except-self/" target="_blank">Link</a></td><td>Medium</td><td>Prefix/Suffix Products</td><td>Amazon, Apple</td></tr>
+                        <tr><td>Longest Consecutive Sequence</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/longest-consecutive-sequence/" target="_blank">Link</a></td><td>Medium</td><td>Hash Set</td><td>Google, Microsoft</td></tr>
+                        <tr><td>Set Matrix Zeroes</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/set-matrix-zeroes/" target="_blank">Link</a></td><td>Medium</td><td>In-place Modification</td><td>Microsoft, Apple</td></tr>
+                        <tr><td>Spiral Matrix</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/spiral-matrix/" target="_blank">Link</a></td><td>Medium</td><td>Matrix Traversal</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Rotate Image</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/rotate-image/" target="_blank">Link</a></td><td>Medium</td><td>Matrix, In-place Transposition</td><td>Amazon, Apple</td></tr>
+                     </tbody>
+                </table>
+            </div>
+            
+            <h3 id="sec15-2">15.2 Two Pointers</h3>
+            <div class="table-container">
+                 <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Valid Palindrome</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/valid-palindrome/" target="_blank">Link</a></td><td>Easy</td><td>Two Pointers</td><td>Facebook, Google</td></tr>
+                        <tr><td>3Sum</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/3sum/" target="_blank">Link</a></td><td>Medium</td><td>Two Pointers, Sorting</td><td>Facebook, Microsoft</td></tr>
+                        <tr><td>Container With Most Water</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/container-with-most-water/" target="_blank">Link</a></td><td>Medium</td><td>Two Pointers</td><td>Google, Amazon</td></tr>
+                        <tr><td>Trapping Rain Water</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/trapping-rain-water/" target="_blank">Link</a></td><td>Hard</td><td>Two Pointers / DP</td><td>Facebook, Google</td></tr>
+                     </tbody>
+                </table>
+            </div>
+
+            <h3 id="sec15-3">15.3 Sliding Window</h3>
+            <div class="table-container">
+                <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Best Time to Buy and Sell Stock</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" target="_blank">Link</a></td><td>Easy</td><td>Sliding Window / Kadane's</td><td>Amazon, Facebook</td></tr>
+                        <tr><td>Longest Substring Without Repeating Characters</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank">Link</a></td><td>Medium</td><td>Sliding Window, Hash Set</td><td>Google, Amazon</td></tr>
+                        <tr><td>Longest Repeating Character Replacement</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/longest-repeating-character-replacement/" target="_blank">Link</a></td><td>Medium</td><td>Sliding Window, Hash Map</td><td>Google, Facebook</td></tr>
+                        <tr><td>Minimum Window Substring</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank">Link</a></td><td>Hard</td><td>Sliding Window, Hash Map</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Sliding Window Maximum</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank">Link</a></td><td>Hard</td><td>Sliding Window, Deque</td><td>Google, Amazon</td></tr>
+                     </tbody>
+                </table>
+            </div>
+            
+            <h3 id="sec15-4">15.4 Stack</h3>
+            <div class="table-container">
+                <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Valid Parentheses</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/valid-parentheses/" target="_blank">Link</a></td><td>Easy</td><td>Stack</td><td>Google, Facebook</td></tr>
+                        <tr><td>Min Stack</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/min-stack/" target="_blank">Link</a></td><td>Medium</td><td>Stack</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Evaluate Reverse Polish Notation</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/evaluate-reverse-polish-notation/" target="_blank">Link</a></td><td>Medium</td><td>Stack</td><td>LinkedIn, Google</td></tr>
+                        <tr><td>Daily Temperatures</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/daily-temperatures/" target="_blank">Link</a></td><td>Medium</td><td>Monotonic Stack</td><td>Google, Amazon</td></tr>
+                        <tr><td>Largest Rectangle in Histogram</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/largest-rectangle-in-histogram/" target="_blank">Link</a></td><td>Hard</td><td>Monotonic Stack</td><td>Google, Amazon</td></tr>
+                     </tbody>
+                </table>
+            </div>
+            
+            <h3 id="sec15-5">15.5 Binary Search</h3>
+             <div class="table-container">
+                <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Binary Search</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/binary-search/" target="_blank">Link</a></td><td>Easy</td><td>Binary Search</td><td>Microsoft, Amazon</td></tr>
+                        <tr><td>Search a 2D Matrix</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/search-a-2d-matrix/" target="_blank">Link</a></td><td>Medium</td><td>Binary Search</td><td>Amazon, Google</td></tr>
+                        <tr><td>Find Minimum in Rotated Sorted Array</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank">Link</a></td><td>Medium</td><td>Binary Search</td><td>Facebook, Microsoft</td></tr>
+                        <tr><td>Search in Rotated Sorted Array</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank">Link</a></td><td>Medium</td><td>Binary Search</td><td>Google, Amazon</td></tr>
+                        <tr><td>Median of Two Sorted Arrays</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/median-of-two-sorted-arrays/" target="_blank">Link</a></td><td>Hard</td><td>Binary Search on Answer</td><td>Google, Apple</td></tr>
+                     </tbody>
+                </table>
+            </div>
+
+            <h3 id="sec15-6">15.6 Linked List</h3>
+            <div class="table-container">
+                <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Reverse Linked List</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank">Link</a></td><td>Easy</td><td>Iteration / Recursion</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Merge Two Sorted Lists</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank">Link</a></td><td>Easy</td><td>Pointers</td><td>Google, Facebook</td></tr>
+                        <tr><td>Linked List Cycle</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank">Link</a></td><td>Easy</td><td>Two Pointers (Fast/Slow)</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Reorder List</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/reorder-list/" target="_blank">Link</a></td><td>Medium</td><td>Fast/Slow Pointers, Reverse</td><td>Google, Facebook</td></tr>
+                        <tr><td>Remove Nth Node From End of List</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" target="_blank">Link</a></td><td>Medium</td><td>Two Pointers</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>LRU Cache</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/lru-cache/" target="_blank">Link</a></td><td>Medium</td><td>Hash Map, Doubly LL</td><td>Google, Amazon</td></tr>
+                        <tr><td>Reverse Nodes in k-Group</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/reverse-nodes-in-k-group/" target="_blank">Link</a></td><td>Hard</td><td>Recursion, Pointers</td><td>Microsoft, Amazon</td></tr>
+                     </tbody>
+                </table>
+            </div>
+
+            <h3 id="sec15-7">15.7 Trees</h3>
+            <div class="table-container">
+                <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Invert Binary Tree</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/invert-binary-tree/" target="_blank">Link</a></td><td>Easy</td><td>DFS / BFS</td><td>Google, Amazon</td></tr>
+                        <tr><td>Maximum Depth of Binary Tree</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" target="_blank">Link</a></td><td>Easy</td><td>DFS / BFS</td><td>Apple, Microsoft</td></tr>
+                        <tr><td>Diameter of Binary Tree</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/diameter-of-binary-tree/" target="_blank">Link</a></td><td>Easy</td><td>DFS, Recursion</td><td>Facebook, Google</td></tr>
+                        <tr><td>Balanced Binary Tree</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/balanced-binary-tree/" target="_blank">Link</a></td><td>Easy</td><td>DFS, Recursion</td><td>Google, Microsoft</td></tr>
+                        <tr><td>Same Tree</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/same-tree/" target="_blank">Link</a></td><td>Easy</td><td>DFS / BFS</td><td>Amazon, Google</td></tr>
+                        <tr><td>Subtree of Another Tree</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/subtree-of-another-tree/" target="_blank">Link</a></td><td>Easy</td><td>DFS, Recursion</td><td>Facebook, Amazon</td></tr>
+                        <tr><td>Lowest Common Ancestor of a BST</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/" target="_blank">Link</a></td><td>Medium</td><td>BST Properties</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Binary Tree Level Order Traversal</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" target="_blank">Link</a></td><td>Medium</td><td>BFS, Queue</td><td>Facebook, Google</td></tr>
+                        <tr><td>Validate Binary Search Tree</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank">Link</a></td><td>Medium</td><td>DFS, In-order Traversal</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Kth Smallest Element in a BST</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/kth-smallest-element-in-a-bst/" target="_blank">Link</a></td><td>Medium</td><td>In-order Traversal</td><td>Google, Facebook</td></tr>
+                        <tr><td>Construct Binary Tree from Preorder and Inorder Traversal</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/" target="_blank">Link</a></td><td>Medium</td><td>Recursion, Hash Map</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Binary Tree Maximum Path Sum</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/" target="_blank">Link</a></td><td>Hard</td><td>DFS, Recursion</td><td>Google, Facebook</td></tr>
+                        <tr><td>Serialize and Deserialize Binary Tree</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/serialize-and-deserialize-binary-tree/" target="_blank">Link</a></td><td>Hard</td><td>DFS / BFS</td><td>Amazon, Google</td></tr>
+                     </tbody>
+                </table>
+            </div>
+            
+            <h3 id="sec15-8">15.8 Tries</h3>
+            <div class="table-container">
+                <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Implement Trie (Prefix Tree)</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank">Link</a></td><td>Medium</td><td>Trie Node, Class Design</td><td>Google, Amazon</td></tr>
+                        <tr><td>Design Add and Search Words Data Structure</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/design-add-and-search-words-data-structure/" target="_blank">Link</a></td><td>Medium</td><td>Trie, Backtracking</td><td>Facebook, Microsoft</td></tr>
+                        <tr><td>Word Search II</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/word-search-ii/" target="_blank">Link</a></td><td>Hard</td><td>Trie, Backtracking, DFS</td><td>Amazon, Google</td></tr>
+                     </tbody>
+                </table>
+            </div>
+
+            <h3 id="sec15-9">15.9 Heaps / Priority Queues</h3>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                    <tbody>
+                        <tr><td>Kth Largest Element in a Stream</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/kth-largest-element-in-a-stream/" target="_blank">Link</a></td><td>Easy</td><td>Min-Heap</td><td>Amazon, Facebook</td></tr>
+                        <tr><td>Last Stone Weight</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/last-stone-weight/" target="_blank">Link</a></td><td>Easy</td><td>Max-Heap</td><td>Google, Apple</td></tr>
+                        <tr><td>Kth Largest Element in an Array</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank">Link</a></td><td>Medium</td><td>Min-Heap / Quickselect</td><td>Facebook, Amazon</td></tr>
+                        <tr><td>K Closest Points to Origin</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/k-closest-points-to-origin/" target="_blank">Link</a></td><td>Medium</td><td>Max-Heap</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Task Scheduler</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/task-scheduler/" target="_blank">Link</a></td><td>Medium</td><td>Heap, Greedy</td><td>Facebook, Google</td></tr>
+                        <tr><td>Find Median from Data Stream</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/find-median-from-data-stream/" target="_blank">Link</a></td><td>Hard</td><td>Two Heaps</td><td>Google, Amazon</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 id="sec15-10">15.10 Backtracking</h3>
+            <div class="table-container">
+                <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Subsets</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/subsets/" target="_blank">Link</a></td><td>Medium</td><td>Backtracking</td><td>Facebook, Amazon</td></tr>
+                        <tr><td>Combination Sum</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/combination-sum/" target="_blank">Link</a></td><td>Medium</td><td>Backtracking</td><td>Google, Uber</td></tr>
+                        <tr><td>Permutations</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/permutations/" target="_blank">Link</a></td><td>Medium</td><td>Backtracking</td><td>Microsoft, Amazon</td></tr>
+                        <tr><td>Subsets II</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/subsets-ii/" target="_blank">Link</a></td><td>Medium</td><td>Backtracking, Sorting</td><td>Facebook, Amazon</td></tr>
+                        <tr><td>Combination Sum II</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/combination-sum-ii/" target="_blank">Link</a></td><td>Medium</td><td>Backtracking, Sorting</td><td>Uber, Amazon</td></tr>
+                        <tr><td>Word Search</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/word-search/" target="_blank">Link</a></td><td>Medium</td><td>Backtracking, DFS</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Palindrome Partitioning</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/palindrome-partitioning/" target="_blank">Link</a></td><td>Medium</td><td>Backtracking</td><td>Google, Uber</td></tr>
+                        <tr><td>N-Queens</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/n-queens/" target="_blank">Link</a></td><td>Hard</td><td>Backtracking</td><td>Amazon, Google</td></tr>
+                     </tbody>
+                </table>
+            </div>
+
+            <h3 id="sec15-11">15.11 Graphs</h3>
+            <div class="table-container">
+                <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Number of Islands</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Link</a></td><td>Medium</td><td>BFS / DFS</td><td>Amazon, Google</td></tr>
+                        <tr><td>Clone Graph</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/clone-graph/" target="_blank">Link</a></td><td>Medium</td><td>BFS / DFS, Hash Map</td><td>Facebook, Google</td></tr>
+                        <tr><td>Pacific Atlantic Water Flow</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/pacific-atlantic-water-flow/" target="_blank">Link</a></td><td>Medium</td><td>BFS / DFS</td><td>Google, Amazon</td></tr>
+                        <tr><td>Course Schedule</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/course-schedule/" target="_blank">Link</a></td><td>Medium</td><td>Topological Sort (DFS)</td><td>Amazon, Facebook</td></tr>
+                        <tr><td>Course Schedule II</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/course-schedule-ii/" target="_blank">Link</a></td><td>Medium</td><td>Topological Sort (Kahn's)</td><td>Facebook, Google</td></tr>
+                        <tr><td>Number of Connected Components in an Undirected Graph</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/" target="_blank">Link</a></td><td>Medium</td><td>BFS / DFS / Union-Find</td><td>LinkedIn, Google</td></tr>
+                        <tr><td>Graph Valid Tree</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/graph-valid-tree/" target="_blank">Link</a></td><td>Medium</td><td>BFS / DFS / Union-Find</td><td>Google, Facebook</td></tr>
+                        <tr><td>Word Ladder</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/word-ladder/" target="_blank">Link</a></td><td>Hard</td><td>BFS</td><td>Amazon, Google</td></tr>
+                        <tr><td>Reconstruct Itinerary</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/reconstruct-itinerary/" target="_blank">Link</a></td><td>Hard</td><td>DFS, Hierholzer's Algorithm</td><td>Google, Facebook</td></tr>
+                        <tr><td>Network Delay Time</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/network-delay-time/" target="_blank">Link</a></td><td>Medium</td><td>Dijkstra's Algorithm</td><td>Amazon, Google</td></tr>
+                        <tr><td>Min Cost to Connect All Points</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/min-cost-to-connect-all-points/" target="_blank">Link</a></td><td>Medium</td><td>Minimum Spanning Tree</td><td>Google, Amazon</td></tr>
+                     </tbody>
+                </table>
+            </div>
+
+            <h3 id="sec15-12">15.12 Dynamic Programming</h3>
+            <div class="table-container">
+                <table>
+                     <thead><tr><th>Problem Name</th><th>Platform</th><th>Link</th><th>Difficulty</th><th>Key Pattern / Concept</th><th>Company Tags</th></tr></thead>
+                     <tbody>
+                        <tr><td>Climbing Stairs</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/climbing-stairs/" target="_blank">Link</a></td><td>Easy</td><td>1D DP</td><td>Apple, Adobe</td></tr>
+                        <tr><td>Min Cost Climbing Stairs</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/min-cost-climbing-stairs/" target="_blank">Link</a></td><td>Easy</td><td>1D DP</td><td>Amazon, Google</td></tr>
+                        <tr><td>House Robber</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/house-robber/" target="_blank">Link</a></td><td>Medium</td><td>1D DP</td><td>Airbnb, LinkedIn</td></tr>
+                        <tr><td>House Robber II</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/house-robber-ii/" target="_blank">Link</a></td><td>Medium</td><td>1D DP</td><td>Microsoft, Google</td></tr>
+                        <tr><td>Longest Palindromic Substring</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/longest-palindromic-substring/" target="_blank">Link</a></td><td>Medium</td><td>2D DP</td><td>Amazon, Microsoft</td></tr>
+                        <tr><td>Palindromic Substrings</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/palindromic-substrings/" target="_blank">Link</a></td><td>Medium</td><td>2D DP</td><td>Facebook, LinkedIn</td></tr>
+                        <tr><td>Decode Ways</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/decode-ways/" target="_blank">Link</a></td><td>Medium</td><td>1D DP</td><td>Facebook, Google</td></tr>
+                        <tr><td>Coin Change</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/coin-change/" target="_blank">Link</a></td><td>Medium</td><td>DP - Unbounded Knapsack</td><td>Amazon, Google</td></tr>
+                        <tr><td>Maximum Product Subarray</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/maximum-product-subarray/" target="_blank">Link</a></td><td>Medium</td><td>1D DP</td><td>LinkedIn, Google</td></tr>
+                        <tr><td>Word Break</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/word-break/" target="_blank">Link</a></td><td>Medium</td><td>1D DP</td><td>Amazon, Facebook</td></tr>
+                        <tr><td>Longest Increasing Subsequence</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/longest-increasing-subsequence/" target="_blank">Link</a></td><td>Medium</td><td>DP - LIS Pattern</td><td>Google, Microsoft</td></tr>
+                        <tr><td>Partition Equal Subset Sum</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/partition-equal-subset-sum/" target="_blank">Link</a></td><td>Medium</td><td>DP - 0/1 Knapsack</td><td>Facebook, Amazon</td></tr>
+                        <tr><td>Unique Paths</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/unique-paths/" target="_blank">Link</a></td><td>Medium</td><td>2D DP</td><td>Amazon, Google</td></tr>
+                        <tr><td>Longest Common Subsequence</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/longest-common-subsequence/" target="_blank">Link</a></td><td>Medium</td><td>2D DP</td><td>Microsoft, Amazon</td></tr>
+                        <tr><td>Best Time to Buy and Sell Stock with Cooldown</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/" target="_blank">Link</a></td><td>Medium</td><td>DP - State Machine</td><td>Facebook, Amazon</td></tr>
+                        <tr><td>Edit Distance</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/edit-distance/" target="_blank">Link</a></td><td>Hard</td><td>2D DP</td><td>Google, Amazon</td></tr>
+                        <tr><td>Burst Balloons</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/burst-balloons/" target="_blank">Link</a></td><td>Hard</td><td>DP - Interval</td><td>Google, Amazon</td></tr>
+                        <tr><td>Distinct Subsequences</td><td>LeetCode</td><td><a href="https://leetcode.com/problems/distinct-subsequences/" target="_blank">Link</a></td><td>Hard</td><td>2D DP</td><td>Facebook, Google</td></tr>
+                     </tbody>
+                </table>
+            </div>
+            
+            <h2 id="conclusion">Conclusion</h2>
+            <p>Mastering Data Structures and Algorithms is an ongoing journey, not a destination. It is the bedrock upon which efficient, scalable, and elegant software is built. This knowledge base has been compiled to serve as a comprehensive, structured, and insightful guide for that journey. It synthesizes the collective wisdom of numerous proven learning resources, from canonical textbooks and university curricula to modern, pattern-based interview preparation guides.</p>
+            <p>The path begins with a solid foundation: choosing the right programming language as a strategic tool, mastering its core constructs, and learning the universal language of complexity analysis. A systematic, multi-step approach to problem-solving provides the mental framework to deconstruct any challenge methodically.</p>
+            <p>The core of this guide provides an encyclopedic reference to data structures—from the fundamental linear structures like arrays and linked lists to the more complex non-linear structures like hash tables, trees, and graphs. For each, the focus has been on understanding the underlying principles, the trade-offs between different implementations, and their ideal use cases. This is complemented by a deep dive into essential algorithmic paradigms—Divide and Conquer, Greedy algorithms, Backtracking, and the powerful technique of Dynamic Programming—and the common problem-solving patterns that enable the rapid development of efficient solutions.</p>
+            <p>Finally, this guide bridges theory and practice by providing language-specific toolkits for C++ and culminates in a unified learning roadmap and an extensive, curated repository of practice problems. This structured approach is designed to guide the learner from foundational knowledge to expert-level proficiency, equipping them with the skills necessary to excel in technical interviews, competitive programming, and professional software development. The key to success is consistent and deliberate practice, using this guide as a map and a reference to navigate the rich and rewarding landscape of algorithmic problem-solving.</p>
+
+        </div>
+    </main>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Navigation Panel Logic ---
+            const navPanel = document.getElementById('nav-panel');
+            const collapseBtn = document.getElementById('collapse-btn');
+            const expandBtn = document.getElementById('expand-btn');
+            const isMobile = () => window.innerWidth <= 768;
+
+            if (collapseBtn) {
+                collapseBtn.addEventListener('click', () => {
+                    navPanel.classList.add('collapsed');
+                });
+            }
+
+            if (expandBtn) {
+                expandBtn.addEventListener('click', () => {
+                    navPanel.classList.remove('collapsed');
+                });
+            }
+
+            // On mobile, start with the navigation panel collapsed
+            if (isMobile()) {
+                navPanel.classList.add('collapsed');
+            }
+            
+            // On mobile, close nav panel after clicking a link
+            const navLinks = document.querySelectorAll('.nav-content a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (isMobile()) {
+                         navPanel.classList.add('collapsed');
+                    }
+                });
+            });
+
+            // --- Math Rendering ---
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        });
+    </script>
+</body>
+</html>
